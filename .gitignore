@@ -58,3 +58,4 @@ build/
 *.o
 __pycache__/
 .eggs/
+complex_install.egg-info/

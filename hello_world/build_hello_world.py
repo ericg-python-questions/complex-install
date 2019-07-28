@@ -1,15 +1,32 @@
 from cffi import FFI
 
-ffibuilder = FFI()
+try:
 
-ffibuilder.cdef( "int hello( void );" )
-ffibuilder.set_source( "complex_install._hello",  # name of the output C extension
-"""
-    #include "hello.h"
-""",
-    include_dirs = [ 'hello_world' ],
-    sources   = [ 'hello_world/hello.c' ],   # includes pi.c as additional sources
-    libraries = [] )    # on Unix, link with the math library
+    ffibuilder = FFI()
+
+    ffibuilder.cdef( "int hello( void );" )
+
+    c_header_source = """
+        #include "hello.h"
+    """
+
+    pkgconfig_libs = ['openssl']
+
+    ffibuilder.set_source_pkgconfig("complex_install._hello",
+                                    pkgconfig_libs,
+                                    c_header_source,
+                                    include_dirs=['hello_world'],
+                                    sources=['hello_world/hello.c'],
+                                    libraries=['crypto'])
+
+except:
+
+    ffibuilder.cdef( "" )
+    ffibuilder.set_source( "complex_install._hello", "" )
+
+    print( "I failed to build" )
+
+
 
 if __name__ == "__main__":
-    ffibuilder.compile( verbose = True )
+        ffibuilder.compile( verbose = True )
